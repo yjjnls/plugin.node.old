@@ -23,6 +23,8 @@ if __name__ == "__main__":
 
     items = []
     for item in builder.items:
+        if item.settings["arch"] != "x86_64":
+            continue
         if len(items) >0 :
             break
         # skip static

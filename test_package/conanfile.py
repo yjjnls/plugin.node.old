@@ -35,7 +35,9 @@ class TestPackageConan(ConanFile):
         
         with tools.environment_append(RunEnvironment(self).vars):
             print(os.path.abspath('.'))
-            self.run('node test.js %s %s'%(PLUGIN_NODE_PATH,TEST_CONVERTER_PATH),cwd = os.path.dirname(__file__))
+            command ='node test.js %s %s'%(PLUGIN_NODE_PATH,TEST_CONVERTER_PATH)
+            print(command)
+            self.run(command,cwd = os.path.dirname(__file__))
             #os.environ['PLUGIN_NODE_DIRECTORY'] = PLUGIN_NODE_DIRECTORY
             #bin_path = os.path.join("bin", "test_package")
             #if self.settings.os == "Windows":
