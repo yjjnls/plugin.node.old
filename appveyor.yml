@@ -32,6 +32,8 @@ install:
 
 before_test:
   - ps: Install-Product node 8 $env:nodejs_arch
+  - ps: npm install node-gyp
+  - ps: node-gyp install
 
 test_script:
   - python build.py
