@@ -52,7 +52,6 @@ deploy:
     override: true
     on:
       branch: dev
-deploy:
   - provider: BinTray
     username: mingyiz
     api_key:
