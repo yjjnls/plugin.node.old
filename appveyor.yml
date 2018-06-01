@@ -40,17 +40,26 @@ before_test:
 test_script:
   - python build.py
 
-for:
-  -
-   branchs:
-     only:
-       - dev
-     deploy:
-       - provider: BinTray
-         username: mingyiz
-         api_key:
-           secure: $env:bintray_apikey
-         subject: pluginx
-         repo: testing
-         package: plugin.node:pluinx
-         publish: true
+deploy:
+  - provider: BinTray
+    username: mingyiz
+    api_key:
+      secure: $env:bintray_apikey
+    subject: pluginx
+    repo: testing
+    package: plugin.node:pluinx
+    publish: true
+    override: true
+    on:
+      branch: dev
+deploy:
+  - provider: BinTray
+    username: mingyiz
+    api_key:
+      secure: $env:bintray_apikey
+    subject: pluginx
+    repo: stable
+    package: plugin.node:pluinx
+    publish: true
+    on:
+      branch: master
