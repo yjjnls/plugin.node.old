@@ -32,7 +32,7 @@ install:
 
 before_test:
   - ps: Install-Product node 8 $env:nodejs_arch
-  - ps: npm install node-gyp
+  - ps: npm install node-gyp -g
   - ps: node-gyp install
 
 test_script:
