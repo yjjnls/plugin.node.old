@@ -49,6 +49,7 @@ deploy:
     repo: testing
     package: plugin.node
     version: $env:__VERSION__
+    artifact: '*'
     publish: true
     override: true
     on:
@@ -61,6 +62,7 @@ deploy:
     repo: stable
     package: plugin.node
     version: $env:__VERSION__
+    artifact: '*'
     publish: true
     on:
       branch: master
