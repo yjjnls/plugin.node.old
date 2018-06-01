@@ -49,8 +49,8 @@ class NodePlugin(ConanFile):
     description = "Node.js addon for c plugin dynamic."
     license = "Apache-2.0"
 
-    exports = ["LICENSE.md"]
-    exports_sources = ["CMakeLists.txt"]
+#    exports = ["LICENSE"]
+    exports_sources = "addon/*",'plugin/*'
     generators = "cmake"
 
     settings = "os", "arch", "compiler", "build_type"
@@ -72,51 +72,6 @@ class NodePlugin(ConanFile):
         
 
     def build(self):
-        print("**************** package *******************************")
-        print(os.path.abspath("."))
-        print("***********************************************")
-
-        self._enviroment_check()
-        self._build_addon()
-
-        #cmake = CMake(self)
-        #cmake.configure(source_folder=__directory__)
-        #cmake.build()
-
-        # Explicit way:
-        # self.run('cmake "%s/src" %s' % (self.source_folder, cmake.command_line))
-        # self.run("cmake --build . %s" % cmake.build_config)
-
-    def package(self):
-        #self.copy(pattern="leptonica-license.txt", dst="licenses", src=self.source_subfolder)
-        #print("$$$$$",os.path.abspath('.'))
-        #print("**************** package *******************************")
-        #print(os.path.abspath("."))
-        #print(self.copy)
-        #print(self.copy._base_dst)
-        #print(self.copy._base_src)
-        #print("***********************************************")
-        
-
-        src = 'addon/build/%s'%self.settings.build_type
-
-        self.copy(pattern= 'plugin.node', dst="bin",src = src)
-        #self.copy(pattern="*.lib", dst="lib", keep_path=False)
-
-    #def package_info(self):
-    #    self.cpp_info.libs = tools.collect_libs(self)
-
-    def _build_addon(self):
-        #CD = os.getcwd()
-        #print(CD,"<------",__directory__)
-        #print(self.build_folder)
-
-        # if out build, copy src to there
-        #print(self.build_folder, __directory__)
-        if not is_same_dir( self.build_folder, __directory__):
-            shutil.copytree( os.path.join(__directory__,"addon"),
-            os.path.join(self.build_folder,"addon"))
-
         options = {
             'arch':'x64',
             'compiler': '',
@@ -143,7 +98,21 @@ class NodePlugin(ConanFile):
 
         self.run("node-gyp -C addon %(python)s configure %(compiler)s --arch=%(arch)s "%options)
         self.run("node-gyp -C addon %(python)s build %(debug)s "%options)
-        #os.chdir(CD)
+
+        cmake = CMake(self)
+        cmake.configure(source_folder='plugin')
+        cmake.build()
+        #cmake.install()
+
+    def package(self):
+        ext='.dll'
+        if self.settings.os == 'Linux':
+            ext = '.so'
+
+        src = 'addon/build/%s'%self.settings.build_type
+
+        self.copy(pattern= 'plugin.node', dst="bin",src = src)
+        self.copy(pattern= 'bin/case-converter-plugin%s'%ext)
 
         
     def _enviroment_check(self):

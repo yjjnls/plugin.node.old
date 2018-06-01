@@ -1,0 +1,37 @@
+build: false
+image: Visual Studio 2017
+environment:
+    PYTHON: "C:\\Python27"
+    PYTHON_VERSION: "2.7.8"
+    PYTHON_ARCH: "32"
+
+    matrix:
+        - CONAN_VISUAL_VERSIONS: 15
+          CONAN_BUILD_TYPES: Release
+          CONAN_BUILD_ARCHS: x86
+          nodejs_arch: x86
+        - CONAN_VISUAL_VERSIONS: 15
+          CONAN_BUILD_TYPES: Debug
+          CONAN_BUILD_ARCHS: x86
+          nodejs_arch: x86
+        - CONAN_VISUAL_VERSIONS: 15
+          CONAN_BUILD_TYPES: Release
+          CONAN_BUILD_ARCHS: x86_64
+          nodejs_arch: x64
+        - CONAN_VISUAL_VERSIONS: 15
+          CONAN_BUILD_TYPES: Debug
+          CONAN_BUILD_ARCHS: x86_64
+          nodejs_arch: x64
+
+
+install:
+  - set PATH=%PATH%;%PYTHON%/Scripts/
+  - pip.exe install conan --upgrade
+  - pip.exe install conan_package_tools bincrafters_package_tools
+  - conan user # It creates the conan data directory
+
+before_test:
+  - ps: Install-Product node 8 $env:nodejs_arch
+
+test_script:
+  - python build.py
