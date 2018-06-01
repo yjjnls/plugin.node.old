@@ -1,12 +1,11 @@
 build: false
 image: Visual Studio 2017
 environment:
-    bintray_apikey:
-      secure: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
+    bintray_apikey: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
     PYTHON: "C:\\Python27"
     PYTHON_VERSION: "2.7.8"
     PYTHON_ARCH: "32"
-    __VERSION__: "0.3.1"
+    __VERSION__: 0.3.1
 
     matrix:
         - CONAN_VISUAL_VERSIONS: 15
@@ -48,8 +47,8 @@ deploy:
       secure: $env:bintray_apikey
     subject: pluginx
     repo: testing
-    package: plugin.node:pluinx
-    version: 0.3.1 
+    package: plugin.node
+    version: $env:__VERSION__
     publish: true
     override: true
     on:
@@ -60,8 +59,8 @@ deploy:
       secure: $env:bintray_apikey
     subject: pluginx
     repo: stable
-    package: plugin.node:pluinx
-    version: $env:__VERSION__ 
+    package: plugin.node
+    version: $env:__VERSION__
     publish: true
     on:
       branch: master
