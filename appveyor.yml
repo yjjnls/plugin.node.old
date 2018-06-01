@@ -1,6 +1,8 @@
 build: false
 image: Visual Studio 2017
 environment:
+    bintray_apikey:
+      secure: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
     PYTHON: "C:\\Python27"
     PYTHON_VERSION: "2.7.8"
     PYTHON_ARCH: "32"
@@ -37,3 +39,13 @@ before_test:
 
 test_script:
   - python build.py
+
+deploy:
+  - provider: BinTray
+    username: mingyiz
+    api_key:
+      secure: $env:bintray_apikey
+    subject: pluginx
+    repo: testing
+    package: plugin.node
+    publish: true
