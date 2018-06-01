@@ -72,6 +72,8 @@ class NodePlugin(ConanFile):
         
 
     def build(self):
+        print(self.channel)
+
         options = {
             'arch':'x64',
             'compiler': '',
