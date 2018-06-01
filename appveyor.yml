@@ -49,7 +49,7 @@ deploy:
     subject: pluginx
     repo: testing
     package: plugin.node:pluinx
-    version: $env:__VERSION__ 
+    version: 0.3.1 
     publish: true
     override: true
     on:
