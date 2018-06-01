@@ -33,25 +33,29 @@ def build():
     builder.run()
 
 
-def auto_build():
+def build_with_nvm():
+    try:
+        import devutils
+        import devutils.software        
+    except:
+        raise Exception('Please install devutils < pip install devutils >.')
+        
     os.environ['CONAN_VISUAL_VERSIONS'] = '15'
     os.environ['CONAN_BUILD_TYPES']='Release'
     archs = ['x86_64','x86']
     for arch in archs:
         os.environ['CONAN_ARCHS']=arch
-        import sys
-        sys.path.insert(0, os.path.dirname(__file__)+'/devutils')
-        import devutils
-        from devutils.software import NodeVersioManager
-        nvm = NodeVersioManager()
+        sys.path.insert(0, os.path.dirname(__file__)+'/devutils')        
+        
+        nvm = devutils.software.NodeVersioManager()
         nvm.use( arch, '^8.11')
         build()
 
 if __name__ == "__main__":
 
     import sys
-    if len(sys.argv) >1 and sys.argv[1]=='nvm-auto':
-        auto_build()
+    if len(sys.argv) >1 and sys.argv[1]=='nvm':
+        build_with_nvm()
     else:
         build()
 
