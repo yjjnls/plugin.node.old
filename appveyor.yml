@@ -40,12 +40,15 @@ before_test:
 test_script:
   - python build.py
 
-#deploy:
-#  - provider: BinTray
-#    username: mingyiz
-#    api_key:
-#      secure: $env:bintray_apikey
-#    subject: pluginx
-#    repo: testing
-#    package: plugin.node
-#    publish: true
+branchs:
+  only:
+    - dev
+  deploy:
+    - provider: BinTray
+      username: mingyiz
+      api_key:
+        secure: $env:bintray_apikey
+      subject: pluginx
+      repo: testing
+      package: plugin.node:pluinx
+      publish: true

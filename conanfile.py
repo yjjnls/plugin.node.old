@@ -5,7 +5,7 @@ from conans import ConanFile, CMake, tools
 import os
 import shutil
 import platform
-
+import re
 __directory__ = os.environ.get('NODE_PLUGIN_SOURCE_FOLDER' ,
                 os.path.abspath(os.path.dirname(__file__)))
 
@@ -41,9 +41,10 @@ def is_same_dir(a,b):
     return normpath(a) == normpath(b)
 
 
+
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.3.0"
+    version = "0.3.1"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."
@@ -69,10 +70,18 @@ class NodePlugin(ConanFile):
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
         self.options["node-plugin"].shared=True
+    def _version_check(self):
+        filename = os.path.join( 'addon/src/version.h')
+        with open(filename, "rt") as version_file:
+            content = version_file.read()
+            version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
+            if version != self.version:
+                raise Exception('conanfile.py version %s diff with %s in addon/src/version.h'%(self.version,version))
         
 
     def build(self):
-        print(self.channel)
+        self._version_check()
+
 
         options = {
             'arch':'x64',
