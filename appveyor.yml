@@ -50,7 +50,7 @@ deploy:
     repo: testing
     package: plugin.node
     version: $env:__VERSION__
-    artifact: plugin.node/0.3.1@pluginx/testing
+    artifact: plugin.node/0.3.1
     publish: true
     override: true
     on:
@@ -63,7 +63,7 @@ deploy:
     repo: stable
     package: plugin.node
     version: $env:__VERSION__
-    artifact: plugin.node/0.3.1@pluginx/stable
+    artifact: plugin.node/0.3.1
     publish: true
     on:
       branch: master
