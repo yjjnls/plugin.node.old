@@ -1,7 +1,6 @@
 build: false
 image: Visual Studio 2017
 environment:
-    bintray_apikey: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
     PYTHON: "C:\\Python27"
     PYTHON_VERSION: "2.7.8"
     PYTHON_ARCH: "32"
@@ -9,8 +8,6 @@ environment:
     CONAN_REFERENCE: pluginx/0.3.1
     CONAN_USERNAME: pluginx
     CONAN_LOGIN_USERNAME: mingyiz
-    CONAN_CHANNEL: testing
-    CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
     CONAN_PASSWORD:
       secure: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
 
@@ -48,6 +45,26 @@ before_test:
 test_script:
   - python build.py
 
+
+for:  
+  # override settings for `master` branch
+  -
+    branches:
+      only:
+        - master          
+    environment:
+      CONAN_CHANNEL: stable
+      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/stable
+      CONAN_STABLE_BRANCH_PATTERN: master
+  -
+    branches:
+      only:
+        - dev          
+    environment:
+      CONAN_CHANNEL: testing
+      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
+      CONAN_STABLE_BRANCH_PATTERN: dev
+      
 #deploy:
 #  - provider: BinTray
 #    username: mingyiz
