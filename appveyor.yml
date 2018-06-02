@@ -1,4 +1,4 @@
-: false
+build: false
 image: Visual Studio 2017
 environment:
     bintray_apikey: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
