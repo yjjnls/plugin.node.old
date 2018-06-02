@@ -62,7 +62,7 @@ deploy:
     repo: stable
     package: plugin.node
     version: $env:__VERSION__
-    artifact: '*'
+    artifact: plugin.node/0.3.1@pluginx/stable
     publish: true
     on:
       branch: master
