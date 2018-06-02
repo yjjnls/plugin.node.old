@@ -1,4 +1,4 @@
-build: false
+: false
 image: Visual Studio 2017
 environment:
     bintray_apikey: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
@@ -49,7 +49,7 @@ deploy:
     repo: testing
     package: plugin.node
     version: $env:__VERSION__
-    artifact: all
+    artifact: plugin.node/0.3.1@pluginx/testing
     publish: true
     override: true
     on:
