@@ -5,8 +5,15 @@ environment:
     PYTHON: "C:\\Python27"
     PYTHON_VERSION: "2.7.8"
     PYTHON_ARCH: "32"
-    __VERSION__: 0.3.1
+
+    CONAN_REFERENCE: pluginx/0.3.1
     CONAN_USERNAME: pluginx
+    CONAN_LOGIN_USERNAME: mingyiz
+    CONAN_CHANNEL: testing
+    CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
+    CONAN_PASSWORD:
+      secure: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
+
 
     matrix:
         - CONAN_VISUAL_VERSIONS: 15
@@ -41,29 +48,29 @@ before_test:
 test_script:
   - python build.py
 
-deploy:
-  - provider: BinTray
-    username: mingyiz
-    api_key:
-      secure: $env:bintray_apikey
-    subject: pluginx
-    repo: testing
-    package: plugin.node
-    version: $env:__VERSION__
-#    artifact: plugin.node/0.3.1
-    publish: true
-    override: true
-    on:
-      branch: dev
-  - provider: BinTray
-    username: mingyiz
-    api_key:
-      secure: $env:bintray_apikey
-    subject: pluginx
-    repo: stable
-    package: plugin.node
-    version: $env:__VERSION__
-#    artifact: plugin.node/0.3.1
-    publish: true
-    on:
-      branch: master
+#deploy:
+#  - provider: BinTray
+#    username: mingyiz
+#    api_key:
+#      secure: $env:bintray_apikey
+#    subject: pluginx
+#    repo: testing
+#    package: plugin.node
+#    version: $env:__VERSION__
+##    artifact: plugin.node/0.3.1
+#    publish: true
+#    override: true
+#    on:
+#      branch: dev
+#  - provider: BinTray
+#    username: mingyiz
+#    api_key:
+#      secure: $env:bintray_apikey
+#    subject: pluginx
+#    repo: stable
+#    package: plugin.node
+#    version: $env:__VERSION__
+##    artifact: plugin.node/0.3.1
+#    publish: true
+#    on:
+#      branch: master
