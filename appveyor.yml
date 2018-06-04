@@ -63,7 +63,7 @@ for:
     environment:
       CONAN_CHANNEL: testing
       CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
-      CONAN_STABLE_BRANCH_PATTERN: dev
+      #CONAN_UPLOAD_ONLY_WHEN_STABLE:
       
 #deploy:
 #  - provider: BinTray
