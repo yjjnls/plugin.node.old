@@ -71,6 +71,7 @@ class NodePlugin(ConanFile):
             self.options.remove("fPIC")
         self.options["node-plugin"].shared=True
     def _version_check(self):
+        return
         filename = os.path.join( 'addon/src/version.h')
         with open(filename, "rt") as version_file:
             content = version_file.read()
