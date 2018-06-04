@@ -41,10 +41,9 @@ def is_same_dir(a,b):
     return normpath(a) == normpath(b)
 
 
-
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.3.1.1"
+    version = "0.3.2"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."

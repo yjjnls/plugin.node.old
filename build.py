@@ -8,10 +8,47 @@ import re
 import subprocess
 import shlex
 import platform
+import semver
 
 from bincrafters import build_template_default
 
-   
+def load_version():
+    filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
+
+    with open(filename, "rt") as version_file:
+        content = version_file.read()
+        version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
+        return version
+
+def load_conanfile_version():
+    filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')
+
+    with open(filename, "rt") as version_file:
+        content = version_file.read()
+        version = re.search(r'''version\s*=\s*["'](\S*)["']''', content).group(1)
+        return version
+
+def bump_version(release='patch'):
+    version = ver or load_version()
+    Ver = semver.SemVer( ver or load_conanfile_version())
+    #bumps old ver to new version
+    version = Ver.inc( release )
+
+    filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
+    f = open(filename,'w');
+    f.write( '#define __VERSION__ "%s"'%version)
+    f.close()
+
+    
+
+
+
+
+    with open(filename, "w") as version_file:
+        content = version_file.read()
+        version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
+        return version
+
 def build():
     builder = build_template_default.get_builder()
 
