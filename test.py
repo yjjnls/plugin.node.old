@@ -115,8 +115,8 @@ class ReleaseManager(object):
         '''%(oldver,ver), ['yes','no'])
         if res == 'yes':
             print("---->commit")
-            check_call('git commit -m bumps to version %s'%ver)
-            check_call('git tag v%s -m bumps to version %s'%(ver,ver))
+            call('git commit -m bumps to version %s'%ver)
+            call('git tag v%s -m bumps to version %s'%(ver,ver))
 
 
     def _has_uncommit(self):
