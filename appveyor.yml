@@ -35,6 +35,7 @@ install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
   - pip.exe install conan --upgrade
   - pip.exe install conan_package_tools bincrafters_package_tools
+  - pip.exe install devutils
   - conan user # It creates the conan data directory.
 
 before_test:
