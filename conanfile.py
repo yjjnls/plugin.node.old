@@ -37,13 +37,12 @@ def is_same_dir(a,b):
     def normpath( p ):
         return os.path.normpath( 
             os.path.abspath(p) ).replace('\\','/')
-    print("*",normpath(a) == normpath(b),normpath(a) , normpath(b))
     return normpath(a) == normpath(b)
 
 
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.4.3.3"
+    version = "0.4.3-dev.4.4"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."
