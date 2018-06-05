@@ -197,6 +197,7 @@ class ConanMultiPackager(object):
         self.upload_retry = upload_retry or os.getenv("CONAN_UPLOAD_RETRY", 3)
 
         if upload_only_when_stable is not None:
+            print('upload_only_when_stable is not None=>',upload_only_when_stable)
             self.upload_only_when_stable = upload_only_when_stable
         else:
             self.upload_only_when_stable = get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE")
