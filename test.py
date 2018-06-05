@@ -110,7 +110,7 @@ class ReleaseManager(object):
             return
 
         check_call('git commit -m bumps to version %s'%ver)
-        check_call('git tag %s -m bumps to version %s'%ver)
+        check_call('git tag v%s -m bumps to version %s'%(ver,version))
 
 
     def _has_uncommit(self):
