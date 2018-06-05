@@ -10,6 +10,15 @@ import argparse
 from devutils.shell import check_call,prompt,call
 from devutils import git
 import platform
+
+import shutil
+shutil.copy(os.path.join( os.path.dirname(os.path.abspath(__file__)),'packager.py'),
+            r'C:/Python27/Lib/site-packages/cpt/packager.py')
+
+
+
+
+
 from bincrafters import build_template_default
 def build():
     print("===>",os.environ.get('CONAN_UPLOAD_ONLY_WHEN_STABLE'))
@@ -107,11 +116,11 @@ class ReleaseManager(object):
             #self._update_version(self._conanfile_version + '.%d'%n,conan_only=True)
             os.environ['CONAN_CHANNEL'] ='testing'
             os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/testing'
-            #os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
+            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
         else:
             os.environ['CONAN_CHANNEL'] ='stable'
             os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
-            #os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
+            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
             os.environ['CONAN_STABLE_BRANCH_PATTERN']='dev'
             
         if platform.system() == 'Windows' and os.environ.get('CONAN_VISUAL_VERSIONS',None) is None:
