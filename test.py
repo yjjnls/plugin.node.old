@@ -113,11 +113,9 @@ class ReleaseManager(object):
         no => give up the commit, you have to revert change file manually.
 
         '''%(oldver,ver), ['yes','no'])
-        if res == 'no':
-            return
-
-        check_call('git commit -m bumps to version %s'%ver)
-        check_call('git tag v%s -m bumps to version %s'%(ver,ver))
+        if res == 'yes':
+            check_call('git commit -m bumps to version %s'%ver)
+            check_call('git tag v%s -m bumps to version %s'%(ver,ver))
 
 
     def _has_uncommit(self):
