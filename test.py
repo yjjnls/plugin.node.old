@@ -5,7 +5,7 @@ import re
 import semver
 import devutils
 import argparse
-from devutils.shell import check_call,prompt
+from devutils.shell import check_call,prompt,call
 
 
 class ReleaseManager(object):
