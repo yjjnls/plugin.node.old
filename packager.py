@@ -344,7 +344,7 @@ class ConanMultiPackager(object):
         st_channel = self.stable_channel or "stable"
         if self.upload_only_when_stable and self.channel != st_channel:
             self.printer.print_message("Skipping upload, not stable channel")
-            self.printer.print_message(str(self.upload_only_when_stable)
+            self.printer.print_message(str(self.upload_only_when_stable))
             self.printer.print_message(str(type(self.upload_only_when_stable)))
             self.printer.print_message(os.environ.get('CONAN_UPLOAD_ONLY_WHEN_STABLE','<NONE>'))
             self.printer.print_message(str(self.channel) ,str(st_channel))
