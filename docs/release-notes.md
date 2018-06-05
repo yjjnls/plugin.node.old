@@ -1,9 +1,9 @@
 
-# Release Note - Plugin.node 0.4.2 
+# Release Note - Plugin.node ${__version} 
 
 <font color=#FFF000 size=4 >under development</font>
 
-The WOMSuite team would like to announce the release of Plugin.node 0.4.2
+The WOMSuite team would like to announce the release of Plugin.node ${__version}
 
 
 Plugin.node is a nodejs addon to help C/C++ programer developing for nodejs.
