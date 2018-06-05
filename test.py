@@ -6,6 +6,31 @@ import semver
 import devutils
 import argparse
 from devutils.shell import check_call,prompt,call
+from devutils import git
+import platform
+from bincrafters import build_template_default
+def build():
+    builder = build_template_default.get_builder()
+
+    items = []
+    for item in builder.items:
+        if not item.options["plugin.node:shared"]:
+            continue
+
+        # Visual Sutido 2017 only
+        if not (platform.system() == "Windows" and item.settings["compiler"] == "Visual Studio" and
+                item.settings["compiler.version"] == '15' ):
+            continue
+    
+        # skip mingw cross-builds
+        if not (platform.system() == "Windows" and item.settings["compiler"] == "gcc" and
+                item.settings["arch"] == "x86"):
+            items.append(item)
+        
+
+    builder.items = items
+
+    builder.run()
 
 
 class ReleaseManager(object):
@@ -35,17 +60,9 @@ class ReleaseManager(object):
             version = re.search(r'''version\s*=\s*["'](\S*)["']''', content).group(1)
             return version
         raise Exception('can not file version in conanfile.py')
-    
-    def bump_version(self, release = 'patch'):
-        pass
 
-
-    def _update_version( self, version ):
-        filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
-        f = open(filename, 'wb')
-        f.write(r'#define __VERSION__ "%s"'%version + '\n')
-        f.close()
-
+    def _update_version( self, version , conan_only = False):
+        
         filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')
 
         f = open(filename, 'rt')
@@ -61,21 +78,44 @@ class ReleaseManager(object):
         content = content.replace('\r\n','\n' )
         f.write( content )
         f.close()
+        if conan_only:
+            return
+
+
+        filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
+        f = open(filename, 'wb')
+        f.write(r'#define __VERSION__ "%s"'%version + '\n')
+        f.close()
+
+
 
         from devutils import shell
         shell.replace('docs/release-notes.md',{'${__version__}':version})
 
-    def buildno(self):
-        return self._get_last_tag_commit_count()
 
 
-    def parse(self):
-        parser = argparse.ArgumentParser()
-        parser.add_argument("command")
 
 
     def _build(self,args):
-        print ('RUN build')
+        git_dir = os.path.dirname( os.path.abspath(__file__))
+        n = git.get_commit_count_since_last_tag(git_dir)
+        if n >0:
+            self._update_version(self._conanfile_version + '.%d'%n,conan_only=True)
+            os.environ['CONAN_CHANNEL'] ='testing'
+            os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/testing'
+            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
+        else:
+            os.environ['CONAN_CHANNEL'] ='stable'
+            os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
+            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
+            os.environ['CONAN_STABLE_BRANCH_PATTERN']='dev'
+        if platform.system() == 'Windows' and os.environ.get('CONAN_VISUAL_VERSIONS',None) is None:
+            os.environ['CONAN_VISUAL_VERSIONS'] = '15'
+
+        build() #global build
+    
+        
+
 
     def _bump_version(self,args):
         if self._has_uncommit():
@@ -114,7 +154,6 @@ class ReleaseManager(object):
 
         '''%(oldver,ver), ['yes','no'])
         if res == 'yes':
-            print("---->commit")
             call('git commit -a -m "bumps to version %s"'%ver)
             call('git tag v%s -m "bumps to version %s"'%(ver,ver))
 
@@ -149,37 +188,7 @@ class ReleaseManager(object):
         args = parser.parse_args(argv)
         args.func(args)
 
-        
 
-
-
-
-
-        
-
-
-#rm = ReleaseManager()
-#
-##rm._update_version("1.2.3.4s")
-#
-##rm._get_commit_count()
-##semver.inc('1.2.3-dev.')
-#print '---------------------'
-#print rm.buildno()
-#print rm._get_last_tag()
-#print rm._get_tag_commit_id( rm._get_last_tag())
-#print '---------------------'
-
-
-if __name__ == '__main__':    
+if __name__ == '__main__':   
     rm =ReleaseManager()
     rm.run( sys.argv[1:] )
-    #import argparse
-    #import sys
-    #print sys.argv
-    #
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument("echo",default = None)
-    #args = parser.parse_args(sys.argv[1:])
-    #print args.echo
-    
