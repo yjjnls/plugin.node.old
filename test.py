@@ -115,7 +115,7 @@ class ReleaseManager(object):
         '''%(oldver,ver), ['yes','no'])
         if res == 'yes':
             print("---->commit")
-            call('git commit -m bumps to version %s'%ver)
+            call('git commit -a -m bumps to version %s'%ver)
             call('git tag v%s -m bumps to version %s'%(ver,ver))
 
 
