@@ -111,6 +111,7 @@ class ReleaseManager(object):
             os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
             os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
             os.environ['CONAN_STABLE_BRANCH_PATTERN']='dev'
+            
         if platform.system() == 'Windows' and os.environ.get('CONAN_VISUAL_VERSIONS',None) is None:
             os.environ['CONAN_VISUAL_VERSIONS'] = '15'
 
