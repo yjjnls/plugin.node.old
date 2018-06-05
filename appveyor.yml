@@ -5,7 +5,7 @@ environment:
     PYTHON_VERSION: "2.7.8"
     PYTHON_ARCH: "32"
 
-    CONAN_REFERENCE: pluginx/0.3.1
+#    CONAN_REFERENCE: pluginx/0.3.1
     CONAN_USERNAME: pluginx
     CONAN_LOGIN_USERNAME: mingyiz
     CONAN_PASSWORD:
@@ -46,25 +46,25 @@ test_script:
   - python build.py
 
 
-for:  
-  # override settings for `master` branch
-  -
-    branches:
-      only:
-        - master          
-    environment:
-      CONAN_CHANNEL: stable
-      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/stable
-      CONAN_STABLE_BRANCH_PATTERN: master
-  -
-    branches:
-      only:
-        - dev          
-    environment:
-      CONAN_CHANNEL: testing
-      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
-      CONAN_UPLOAD_ONLY_WHEN_STABLE: False
-      
+#for:  
+#  # override settings for `master` branch
+#  -
+#    branches:
+#      only:
+#        - master          
+#    environment:
+#      CONAN_CHANNEL: stable
+#      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/stable
+#      CONAN_STABLE_BRANCH_PATTERN: master
+#  -
+#    branches:
+#      only:
+#        - dev          
+#    environment:
+#      CONAN_CHANNEL: testing
+#      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
+#      CONAN_UPLOAD_ONLY_WHEN_STABLE: False
+#      
 #deploy:
 #  - provider: BinTray
 #    username: mingyiz
