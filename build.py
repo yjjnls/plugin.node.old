@@ -12,7 +12,7 @@ from devutils import git
 import platform
 from bincrafters import build_template_default
 def build():
-    print("===>",os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE'])
+    print("===>",os.environ.get('CONAN_UPLOAD_ONLY_WHEN_STABLE'))
     builder = build_template_default.get_builder()
 
     items = []
