@@ -205,7 +205,7 @@ class ConanMultiPackager(object):
         val = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE", None)
         self.printer.print_message("CONAN_UPLOAD_ONLY_WHEN_STABLE",val)
         self.printer.print_message("bool",val not in (None, "0", "None", "False"))
-        
+        print(self.upload_only_when_stable,type(self.upload_only_when_stable),"<===================")
 
         self.docker_entry_script = docker_entry_script or os.getenv("CONAN_DOCKER_ENTRY_SCRIPT")
 
