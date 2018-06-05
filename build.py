@@ -12,6 +12,7 @@ from devutils import git
 import platform
 from bincrafters import build_template_default
 def build():
+    print("===>",os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE'])
     builder = build_template_default.get_builder()
 
     items = []
@@ -110,7 +111,7 @@ class ReleaseManager(object):
         else:
             os.environ['CONAN_CHANNEL'] ='stable'
             os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
-            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
+            #os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
             os.environ['CONAN_STABLE_BRANCH_PATTERN']='dev'
             
         if platform.system() == 'Windows' and os.environ.get('CONAN_VISUAL_VERSIONS',None) is None:
