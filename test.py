@@ -63,7 +63,7 @@ class ReleaseManager(object):
         f.close()
 
         from devutils import shell
-        shell.replace('docs/release-notes.md',{'${__version__}',version})
+        shell.replace('docs/release-notes.md',{'${__version__}':version})
 
     def buildno(self):
         return self._get_last_tag_commit_count()
@@ -87,6 +87,8 @@ class ReleaseManager(object):
         ver    = semver.inc( oldver, args.release,loose = True)
         
         res = prompt('''
+
+        *********************************************************
         bump the version %s => %s
         src/addon/src/version.h
         conanfile.py
@@ -99,6 +101,8 @@ class ReleaseManager(object):
 
         self._update_version( ver )
         res = prompt('''
+
+        ========================================================
         bump the version %s => %s
         please check below files 
 
@@ -113,13 +117,12 @@ class ReleaseManager(object):
             return
 
         check_call('git commit -m bumps to version %s'%ver)
-        check_call('git tag v%s -m bumps to version %s'%(ver,version))
+        check_call('git tag v%s -m bumps to version %s'%(ver,ver))
 
 
     def _has_uncommit(self):
         out,err = check_call('git status -s --show-stash')
         out = out.strip('\n')
-        print (out,'<-----')
         if out:            
             return True
         return False
