@@ -62,6 +62,9 @@ class ReleaseManager(object):
         f.write( content )
         f.close()
 
+        from devutils import shell
+        shell.replace('docs/release-notes.md',{'${__version__}',version})
+
     def buildno(self):
         return self._get_last_tag_commit_count()
 
