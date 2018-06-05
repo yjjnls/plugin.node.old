@@ -10,6 +10,7 @@ environment:
     CONAN_LOGIN_USERNAME: mingyiz
     CONAN_PASSWORD:
       secure: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
+    CONAN_UPLOAD_ONLY_WHEN_STABLE: None
 
 
     matrix:

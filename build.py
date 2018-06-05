@@ -102,10 +102,11 @@ class ReleaseManager(object):
         git_dir = os.path.dirname( os.path.abspath(__file__))
         n = git.get_commit_count_since_last_tag(git_dir)
         if n >0:
-            self._update_version(self._conanfile_version + '.%d'%n,conan_only=True)
+            
+            #self._update_version(self._conanfile_version + '.%d'%n,conan_only=True)
             os.environ['CONAN_CHANNEL'] ='testing'
             os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/testing'
-            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
+            #os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
         else:
             os.environ['CONAN_CHANNEL'] ='stable'
             os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
