@@ -70,7 +70,7 @@ def replace_version(version):
     def _replace(m):
         return 'version = "%s"'%version
     content = P_VERSION.sub(_replace, content)
-    f = open(filename,'wb')
+    f = open(os.path.join(__dir__, 'conanfile.py'),'wb')
     f.write( content )
     f.close()
 
