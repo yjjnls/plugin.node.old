@@ -38,7 +38,8 @@ def update_version(version):
 
     # addon 
     f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
-    f.write(r'#define __VERSION__ "%s"\n'%version)
+    f.write('''#define __VERSION__ "%s"
+    '''%version)
     f.close()
     return ['conanfile.py','addon/src/version.h']
 
