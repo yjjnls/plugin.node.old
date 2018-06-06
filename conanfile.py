@@ -16,7 +16,7 @@ def _UNUSED(*param):
 
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.5.1-dev"
+    version = "0.5.2-dev"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."
@@ -43,13 +43,6 @@ class NodePlugin(ConanFile):
             self.options.remove("fPIC")
         self.options["node-plugin"].shared=True
 
-        filename = os.path.join('addon/src/version.h')
-        f = open( filename,'wb')
-        f.write('''#define __VERSION__ "%s"
-        '''%self.version)
-        f.close()
-
-
     def build(self):
         options = {
             'arch':'x64',
@@ -74,6 +67,12 @@ class NodePlugin(ConanFile):
                 msvs = str(self.settings.compiler.version)
                 assert ( msvs in _COMPILER.keys())
                 options["compiler"] = _COMPILER[msvs]
+
+        filename = os.path.join('addon/src/version.h')
+        f = open( filename,'wb')
+        f.write('''#define __VERSION__ "%s"
+        '''%self.version)
+        f.close()
 
         self.run("node-gyp -C addon %(python)s configure %(compiler)s --arch=%(arch)s "%options)
         self.run("node-gyp -C addon %(python)s build %(debug)s "%options)
