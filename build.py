@@ -61,31 +61,43 @@ def load_version():
         return version
     raise Exception('can not file version in conanfile.py')
 
+def replace_version(version):
+    # conanfile.py
+    f = open( os.path.join(__dir__, 'conanfile.py'), 'rt')
+    content = f.read()
+    f.close()#
+    P_VERSION = re.compile(r'''version\s*=\s*["'](?P<version>\S*)["']''')
+    def _replace(m):
+        return 'version = "%s"'%version
+    content = P_VERSION.sub(_replace, content)
+    f = open(filename,'wb')
+    f.write( content )
+    f.close()
+
+    # addon 
+    f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
+    f.write(r'#define __VERSION__ "%s\n"'%version)
+    f.close()
+
 
 def build():
-
     n             = get_build_number()
     version       = load_version()
 
     if n == 0:
         CONAN_CHANNEL = 'stable'
-        CONAN_UPLOAD_ONLY_WHEN_STABLE = True
-        CONAN_REFERENCE = None
+        CONAN_UPLOAD_ONLY_WHEN_STABLE = True        
     else:
         version = '%s.%d'%(version,n)
         CONAN_CHANNEL = 'testing'
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
-        CONAN_REFERENCE = '%s/%s'%(PACKAGE_NAME,version)
+        replace_version(version)
 
-        f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
-        f.write(r'#define __VERSION__ "%s\n"'%version)
-        f.close()#
 
     CONAN_UPLOAD  = 'https://api.bintray.com/conan/%s/%s'%(CONAN_USERNAME,CONAN_CHANNEL)
 
     builder = ConanMultiPackager(
         channel=CONAN_CHANNEL,
-        reference= CONAN_REFERENCE,
         upload_only_when_stable= CONAN_UPLOAD_ONLY_WHEN_STABLE,
         upload=CONAN_UPLOAD,     
         username=CONAN_USERNAME
@@ -103,7 +115,6 @@ def build():
             continue
 
         # Visual Sutido 2017 only
-
         if platform.system() == "Windows":
             if settings["compiler"] == "Visual Studio":
                 if settings["compiler.version"] == '15' :
