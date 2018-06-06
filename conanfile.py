@@ -33,11 +33,11 @@ def check_call(cmd, cmd_dir=None):
         err = err.decode(sys.stdout.encoding)
 
     return output,err
-def is_same_dir(a,b):
-    def normpath( p ):
-        return os.path.normpath( 
-            os.path.abspath(p) ).replace('\\','/')
-    return normpath(a) == normpath(b)
+#def is_same_dir(a,b):
+#    def normpath( p ):
+#        return os.path.normpath( 
+#            os.path.abspath(p) ).replace('\\','/')
+#    return normpath(a) == normpath(b)
 
 
 class NodePlugin(ConanFile):
@@ -68,18 +68,18 @@ class NodePlugin(ConanFile):
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
         self.options["node-plugin"].shared=True
-    def _version_check(self):
-        return
-        filename = os.path.join( 'addon/src/version.h')
-        with open(filename, "rt") as version_file:
-            content = version_file.read()
-            version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
-            if version != self.version:
-                raise Exception('conanfile.py version %s diff with %s in addon/src/version.h'%(self.version,version))
+#   def _version_check(self):
+#       return
+#       filename = os.path.join( 'addon/src/version.h')
+#       with open(filename, "rt") as version_file:
+#           content = version_file.read()
+#           version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
+#           if version != self.version:
+#               raise Exception('conanfile.py version %s diff with %s in addon/src/version.h'%(self.version,version))
         
 
     def build(self):
-        self._version_check()
+#        self._version_check()
 
 
         options = {

@@ -17,7 +17,7 @@ import shlex
 from cpt.packager import ConanMultiPackager
 
 
-
+__dir__ =os.path.dirname(os.path.abspath(__file__))
 PACKAGE_NAME   = 'plugin.node'
 CONAN_USERNAME = 'pluginx'
 
@@ -56,7 +56,7 @@ def load_version():
     '''
     parse the package version from conanfile.py
     '''
-    filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')
+    filename = os.path.join(__dir__, 'conanfile.py')
 
     with open(filename, "rt") as version_file:
         content = version_file.read()
@@ -79,6 +79,10 @@ def build():
         CONAN_CHANNEL = 'testing'
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
         CONAN_REFERENCE = '%s/%s'%(PACKAGE_NAME,version)
+
+        f = open(os.path.join(__dir__,'/src/addon/version.h', 'wb'))
+        f.write(r'#define __VERSION__ "%s\n"'%version)
+        f.close()#
 
     CONAN_UPLOAD  = 'https://api.bintray.com/conan/%s/%s'%(CONAN_USERNAME,CONAN_CHANNEL)
 
@@ -109,6 +113,7 @@ def build():
                     builds.append([settings, options, env_vars, build_requires])
         else:
             builds.append([settings, options, env_vars, build_requires])
+
 
     builder.run()
 
