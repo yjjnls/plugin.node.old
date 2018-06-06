@@ -48,6 +48,7 @@ def build():
     n             = get_build_number()
     conanfile = load_conanfile_class(os.path.join(__dir__,'conanfile.py'))
     version = conanfile.version
+    CONAN_STABLE_CHANNEL = None
 
 
     if n == 0:
@@ -57,6 +58,7 @@ def build():
         version = '%s.%d'%(version,n)
         CONAN_CHANNEL = 'testing'
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
+        CONAN_STABLE_CHANNEL = 'stable'
         update_version(version)
 
 
@@ -66,7 +68,8 @@ def build():
         channel=CONAN_CHANNEL,
         upload_only_when_stable= CONAN_UPLOAD_ONLY_WHEN_STABLE,
         upload=CONAN_UPLOAD,     
-        username=CONAN_USERNAME
+        username=CONAN_USERNAME,
+        stable_channel = CONAN_STABLE_CHANNEL
     )
 
     builder.add_common_builds()
