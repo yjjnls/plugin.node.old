@@ -38,7 +38,7 @@ def update_version(version):
 
     # addon 
     f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
-    f.write(r'#define __VERSION__ "%s\n"'%version)
+    f.write(r'#define __VERSION__ "%s"\n'%version)
     f.close()
     return ['conanfile.py','addon/src/version.h']
 
@@ -71,12 +71,11 @@ def build():
     builder.add_common_builds()
     builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-
         # dynamic only
         if not options["plugin.node:shared"]:
             continue
         # release only    
-        if settings["build_type"] != "Debug":
+        if settings["build_type"] == "Debug":
             continue
 
         # Visual Sutido 2017 only
@@ -86,15 +85,14 @@ def build():
                     builds.append([settings, options, env_vars, build_requires])
         else:
             builds.append([settings, options, env_vars, build_requires])
-
-
+    builder.builds = builds
     builder.run()
 
 
 if __name__ == '__main__':
     '''
     windows release x86
-    set CONAN_VISUAL_VERSIONS=5
+    set CONAN_VISUAL_VERSIONS=15
     set CONAN_BUILD_TYPES=Release
     set CONAN_ARCHS=x86
     python build.py
