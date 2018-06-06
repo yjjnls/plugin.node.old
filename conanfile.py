@@ -42,7 +42,7 @@ def check_call(cmd, cmd_dir=None):
 
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.4.4-dev"
+    version = "0.5.0"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."
