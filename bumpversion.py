@@ -61,11 +61,14 @@ def hint():
     return semver.inc(conanfile.version,res,loose=True)
 
 def confirm(files):
-    m.info("\n".join(files))
-    m.info('these files has been modified, please verify.\n')
+    conanfile = load_conanfile_class(os.path.join(__dir__,'conanfile.py'))
+    m.info('''
+    version: %s bumped. the following files has been modified, please verify.    
+    '''%conanfile.version)
+
     res = prompt('commit this change(yes) or rollback (no)?',['yes','no'])
     if res == 'yes':
-        conanfile = load_conanfile_class(os.path.join(__dir__,'conanfile.py'))
+        
         call('git commit -a -m "bumps to version %s"'%conanfile.version)
         call('git tag v{0} -m "bumps to version {0}"'.format(conanfile.version))
         m.success('version %s has been bumped.'%conanfile.version)
