@@ -145,6 +145,7 @@ class ConanMultiPackager(object):
             if not name or not version:
                 raise Exception("Specify a CONAN_REFERENCE or name and version fields in the recipe")
             self.reference = ConanFileReference(name, version, self.username, self.channel)
+            print("=======================###",self.reference)
 
         # If CONAN_DOCKER_IMAGE is speified, then use docker is True
         self.use_docker = (use_docker or os.getenv("CONAN_USE_DOCKER", False) or

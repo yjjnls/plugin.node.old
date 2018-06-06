@@ -58,7 +58,7 @@ def build():
         version = '%s.%d'%(version,n)
         CONAN_CHANNEL = 'testing'
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
-        CONAN_STABLE_CHANNEL = 'stable'
+        CONAN_STABLE_CHANNEL = 'testing'
         update_version(version)
 
 
