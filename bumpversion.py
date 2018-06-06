@@ -6,11 +6,19 @@ import semver
 from shell import shell as call
 from conans.client.loader_parse import load_conanfile_class
 from conans.client.output import ConanOutput,Color
+from build import update_version
 
 __dir__ =os.path.dirname(os.path.abspath(__file__))
-
 colorama.init()
 m = ConanOutput(sys.stdout, True)
+
+
+
+
+
+
+
+
 
 # Shim for raw_input,print in python3
 if sys.version_info > (3,):
@@ -31,7 +39,7 @@ def check():
     status = call('git status -s --show-stash')
     if len(status.output()):
         m.error('There umcommit files, plsease commit them.')
-        m.info("".join(status.output()))
+        m.info("\n".join(status.output()))
         return False
     return True
 
@@ -52,12 +60,26 @@ def hint():
         return None
     return semver.inc(conanfile.version,res,loose=True)
 
-
-def bump(version):
-    pass
-def confirm():
-    pass
+def confirm(files):
+    m.info("\n".join(files))
+    m.info('these files has been modified, please verify.\n')
+    res = prompt('commit this change(yes) or rollback (no)?',['yes','no'])
+    if res == 'yes':
+        conanfile = load_conanfile_class(os.path.join(__dir__,'conanfile.py'))
+        call('git commit -a -m "bumps to version %s"'%conanfile.version)
+        call('git tag v{0} -m "bumps to version {0}"'.format(conanfile.version))
+        m.success('version %s has been bumped.'%conanfile.version)
+    else:
+        for filename in files:
+            call('git checkout -- %s'%filename)
+        m.warn('version bump canceled, all changed file reverted.')
 
 if __name__ == '__main__':
-    check()
-    hint()
+    
+    if check():
+        version = hint()
+        if version:
+            files = update_version(version)
+            confirm(files)
+
+

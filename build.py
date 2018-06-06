@@ -8,36 +8,37 @@ import re
 #import devutils
 #import argparse
 #from devutils.shell import check_call,prompt,call
-
+from shell import shell as call
 import platform
-import shutil
-import shlex
+#import shutil
+#import shlex
 from cpt.packager import ConanMultiPackager
+from conans.client.loader_parse import load_conanfile_class
 __dir__ =os.path.dirname(os.path.abspath(__file__))
 
 PACKAGE_NAME   = 'plugin.node'
 CONAN_USERNAME = 'pluginx'
 
-import subprocess
-
-def call(cmd):
-    cmd = shlex.split(cmd)
-    cmd_dir = os.path.dirname(os.path.abspath(__file__))
-
-    try:
-        process = subprocess.Popen(cmd, cwd=cmd_dir,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, shell=True)
-        output, err = process.communicate()
-        if process.poll():
-            raise Exception()
-    except Exception:
-        raise Exception("Error running command: %s" % cmd)
-
-    if sys.stdout.encoding:
-        output = output.decode(sys.stdout.encoding)
-        err = err.decode(sys.stdout.encoding)
-    return output.strip()
+#import subprocess
+#
+#def call(cmd):
+#    cmd = shlex.split(cmd)
+#    cmd_dir = os.path.dirname(os.path.abspath(__file__))
+#
+#    try:
+#        process = subprocess.Popen(cmd, cwd=cmd_dir,
+#                                   stdout=subprocess.PIPE,
+#                                   stderr=subprocess.PIPE, shell=True)
+#        output, err = process.communicate()
+#        if process.poll():
+#            raise Exception()
+#    except Exception:
+#        raise Exception("Error running command: %s" % cmd)
+#
+#    if sys.stdout.encoding:
+#        output = output.decode(sys.stdout.encoding)
+#        err = err.decode(sys.stdout.encoding)
+#    return output.strip()
 
 def get_build_number():
     '''
@@ -45,9 +46,9 @@ def get_build_number():
     if no commit, this is an tag
     '''
     commitid     = call('git rev-list --tags --no-walk --max-count=1')
-    count = call('git rev-list  %s.. --count'%commitid)
+    count = call('git rev-list  %s.. --count'%commitid.output()[0])
 
-    return int(count)
+    return int(count.output()[0])
 
 def load_version():
     '''
@@ -61,7 +62,7 @@ def load_version():
         return version
     raise Exception('can not file version in conanfile.py')
 
-def replace_version(version):
+def update_version(version):
     # conanfile.py
     f = open( os.path.join(__dir__, 'conanfile.py'), 'rt')
     content = f.read()
@@ -78,11 +79,14 @@ def replace_version(version):
     f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
     f.write(r'#define __VERSION__ "%s\n"'%version)
     f.close()
+    return ['conanfile.py','addon/src/version.h']
 
 
 def build():
     n             = get_build_number()
-    version       = load_version()
+    conanfile = load_conanfile_class(os.path.join(__dir__,'conanfile.py'))
+    version = conanfile.version
+
 
     if n == 0:
         CONAN_CHANNEL = 'stable'
@@ -91,7 +95,7 @@ def build():
         version = '%s.%d'%(version,n)
         CONAN_CHANNEL = 'testing'
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
-        replace_version(version)
+        update_version(version)
 
 
     CONAN_UPLOAD  = 'https://api.bintray.com/conan/%s/%s'%(CONAN_USERNAME,CONAN_CHANNEL)
