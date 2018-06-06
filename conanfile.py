@@ -6,43 +6,17 @@ import os
 import shutil
 import platform
 import re
-__directory__ = os.environ.get('NODE_PLUGIN_SOURCE_FOLDER' ,
-                os.path.abspath(os.path.dirname(__file__)))
+
+__dir__ = os.path.dirname(os.path.abspath(__file__))
 
 def _UNUSED(*param):
     pass
 
-def check_call(cmd, cmd_dir=None):
-    import sys
-    import shlex
-    import subprocess
-
-    if isinstance(cmd, str):
-        cmd = shlex.split(cmd)
-    process = subprocess.Popen(cmd, cwd=cmd_dir,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE, shell=True)
-    output, err = process.communicate()
-    if process.poll():
-        raise Exception("runing command %s failed"%cmd)
-
-    if sys.stdout.encoding:
-        output = output.decode(sys.stdout.encoding)
-
-    if sys.stdout.encoding:
-        err = err.decode(sys.stdout.encoding)
-
-    return output,err
-#def is_same_dir(a,b):
-#    def normpath( p ):
-#        return os.path.normpath( 
-#            os.path.abspath(p) ).replace('\\','/')
-#    return normpath(a) == normpath(b)
 
 
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.5.1-dev"
+    version = "0.5.1-dev.3"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."
@@ -68,20 +42,15 @@ class NodePlugin(ConanFile):
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
         self.options["node-plugin"].shared=True
-#   def _version_check(self):
-#       return
-#       filename = os.path.join( 'addon/src/version.h')
-#       with open(filename, "rt") as version_file:
-#           content = version_file.read()
-#           version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
-#           if version != self.version:
-#               raise Exception('conanfile.py version %s diff with %s in addon/src/version.h'%(self.version,version))
-        
+
+        filename = os.path.join('addon/src/version.h')
+        f = open( filename,'wb')
+        f.write('''#define __VERSION__ "%s"
+        '''%self.version)
+        f.close()
+
 
     def build(self):
-#        self._version_check()
-
-
         options = {
             'arch':'x64',
             'compiler': '',
@@ -123,29 +92,5 @@ class NodePlugin(ConanFile):
 
         self.copy(pattern= 'plugin.node', dst="bin",src = src)
         self.copy(pattern= 'bin/case-converter-plugin%s'%ext)
-
-        
-    def _enviroment_check(self):
-        
-        check_call('node-gyp --version')
-        self._python_check()
-
-    def _python_check(self):
-        from conans.client.tools.files import which
-        self.PYTHON = os.environ.get('PYTHON2',
-                      os.environ.get('PYTHON',None))
-        if self.PYTHON is None:
-            self._python = which('python')
-            if self._python is None:
-                raise Exception("python program not exists.")
-        
-        python3, version = check_call('python --version', self.PYTHON)
-        if not version:
-            raise Exception(" only python2 support. detected <%s>"%python3.strip())
-        
-        version = version.split()[1]
-        if version  > '3.0.0':
-            raise Exception(" only python2 support.")
-        
 
         

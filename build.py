@@ -36,13 +36,6 @@ def update_version(version):
     f.write( content )
     f.close()
 
-    # addon 
-    f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
-    f.write('''#define __VERSION__ "%s"
-    '''%version)
-    f.close()
-    return ['conanfile.py','addon/src/version.h']
-
 
 def build():
     n             = get_build_number()
