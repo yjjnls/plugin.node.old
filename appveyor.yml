@@ -18,25 +18,25 @@ environment:
           CONAN_BUILD_TYPES: Release
           CONAN_ARCHS: x86
           nodejs_arch: x86
-#       - CONAN_VISUAL_VERSIONS: 15
-#         CONAN_BUILD_TYPES: Debug
-#         CONAN_ARCHS: x86
-#         nodejs_arch: x86
-#       - CONAN_VISUAL_VERSIONS: 15
-#         CONAN_BUILD_TYPES: Release
-#         CONAN_ARCHS: x86_64
-#         nodejs_arch: x64
-#       - CONAN_VISUAL_VERSIONS: 15
-#         CONAN_BUILD_TYPES: Debug
-#         CONAN_ARCHS: x86_64
-#         nodejs_arch: x64
+       - CONAN_VISUAL_VERSIONS: 15
+         CONAN_BUILD_TYPES: Debug
+         CONAN_ARCHS: x86
+         nodejs_arch: x86
+       - CONAN_VISUAL_VERSIONS: 15
+         CONAN_BUILD_TYPES: Release
+         CONAN_ARCHS: x86_64
+         nodejs_arch: x64
+       - CONAN_VISUAL_VERSIONS: 15
+         CONAN_BUILD_TYPES: Debug
+         CONAN_ARCHS: x86_64
+         nodejs_arch: x64
 
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
   - pip.exe install conan --upgrade
   - pip.exe install conan_package_tools bincrafters_package_tools
-  - pip.exe install devutils
+  - pip.exe install shell
   - conan user # It creates the conan data directory.
 
 before_test:
