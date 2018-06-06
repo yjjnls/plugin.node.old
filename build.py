@@ -77,7 +77,7 @@ def build():
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
         CONAN_REFERENCE = '%s/%s'%(PACKAGE_NAME,version)
 
-        f = open(os.path.join(__dir__,'src/addon/version.h') ,'wb')
+        f = open(os.path.join(__dir__,'addon/src/version.h') ,'wb')
         f.write(r'#define __VERSION__ "%s\n"'%version)
         f.close()#
 
