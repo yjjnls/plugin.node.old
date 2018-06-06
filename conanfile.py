@@ -42,7 +42,7 @@ def is_same_dir(a,b):
 
 class NodePlugin(ConanFile):
     name = "plugin.node"
-    version = "0.4.3-dev.4.4"
+    version = "0.4.4-dev"
     url = "https://github.com/Mingyiz/plugin.node"
     homepage = url
     description = "Node.js addon for c plugin dynamic."

@@ -4,208 +4,331 @@ from __future__ import absolute_import, division, print_function
 import sys
 import os
 import re
-import semver
-import devutils
-import argparse
-from devutils.shell import check_call,prompt,call
-from devutils import git
+#import semver
+#import devutils
+#import argparse
+#from devutils.shell import check_call,prompt,call
+
 import platform
-
 import shutil
-shutil.copy(os.path.join( os.path.dirname(os.path.abspath(__file__)),'packager.py'),
-            r'C:/Python27/Lib/site-packages/cpt/packager.py')
+import shlex
+
+
+from cpt.packager import ConanMultiPackager
 
 
 
+PACKAGE_NAME   = 'plugin.node'
+CONAN_USERNAME = 'pluginx'
+
+import subprocess
+
+def call(cmd):
+    cmd = shlex.split(cmd)
+    cmd_dir = os.path.dirname(os.path.abspath(__file__))
+
+    try:
+        process = subprocess.Popen(cmd, cwd=cmd_dir,
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, shell=True)
+        output, err = process.communicate()
+        if process.poll():
+            raise Exception()
+    except Exception:
+        raise Exception("Error running command: %s" % cmd)
+
+    if sys.stdout.encoding:
+        output = output.decode(sys.stdout.encoding)
+        err = err.decode(sys.stdout.encoding)
+    return output.strip()
+
+def get_build_number():
+    '''
+    Get current git repo commits time since last tag.
+    if no commit, this is an tag
+    '''
+    commitid     = call('git rev-list --tags --no-walk --max-count=1')
+    count = call('git rev-list  %s.. --count'%commitid)
+
+    return int(count)
+
+def load_version():
+    '''
+    parse the package version from conanfile.py
+    '''
+    filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')
+
+    with open(filename, "rt") as version_file:
+        content = version_file.read()
+        version = re.search(r'''version\s*=\s*["'](\S*)["']''', content).group(1)
+        return version
+    raise Exception('can not file version in conanfile.py')
 
 
-from bincrafters import build_template_default
 def build():
-    print("===>",os.environ.get('CONAN_UPLOAD_ONLY_WHEN_STABLE'))
-    builder = build_template_default.get_builder()
 
-    items = []
-    for item in builder.items:
-        if not item.options["plugin.node:shared"]:
+    n             = get_build_number()
+    version       = load_version()
+
+    if n == 0:
+        CONAN_CHANNEL = 'stable'
+        CONAN_UPLOAD_ONLY_WHEN_STABLE = True
+        CONAN_REFERENCE = None
+    else:
+        version = '%s.%d'%(version,n)
+        CONAN_CHANNEL = 'testing'
+        CONAN_UPLOAD_ONLY_WHEN_STABLE = False
+        CONAN_REFERENCE = '%s/%s'%(PACKAGE_NAME,version)
+
+    CONAN_UPLOAD  = 'https://api.bintray.com/conan/%s/%s'%(CONAN_USERNAME,CONAN_CHANNEL)
+
+    builder = ConanMultiPackager(
+        channel=CONAN_CHANNEL,
+        reference= CONAN_REFERENCE,
+        upload_only_when_stable= CONAN_UPLOAD_ONLY_WHEN_STABLE,
+        upload=CONAN_UPLOAD,     
+        username=CONAN_USERNAME
+    )
+
+    builder.add_common_builds()
+    builds = []
+    for settings, options, env_vars, build_requires, reference in builder.items:
+
+        # dynamic only
+        if not options["plugin.node:shared"]:
+            continue
+        # release only    
+        if settings["build_type"] != "Debug":
             continue
 
         # Visual Sutido 2017 only
-        if not (platform.system() == "Windows" and item.settings["compiler"] == "Visual Studio" and
-                item.settings["compiler.version"] == '15' ):
-            continue
-    
-        # skip mingw cross-builds
-        if not (platform.system() == "Windows" and item.settings["compiler"] == "gcc" and
-                item.settings["arch"] == "x86"):
-            items.append(item)
-        
 
-    builder.items = items
+        if platform.system() == "Windows":
+            if settings["compiler"] == "Visual Studio":
+                if settings["compiler.version"] == '15' :
+                    builds.append([settings, options, env_vars, build_requires])
+        else:
+            builds.append([settings, options, env_vars, build_requires])
 
     builder.run()
 
 
-class ReleaseManager(object):
+if __name__ == '__main__':
+    '''
+    windows release x86
+    set CONAN_VISUAL_VERSIONS=5
+    set CONAN_BUILD_TYPES=Release
+    set CONAN_ARCHS=x86
+    python build.py
 
-    _version = None
-    _conanfile_version = None
+    '''
 
+    build()
 
-    def __init__(self):
-        self._version = self._load_version()
-        self._conanfile_version = self._load_conanfile_version()
+#
+#
+#
+#
+#
+#
+#
+#
+#
 
-    def _load_version(self):
-        filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
+#shutil.copy(os.path.join( os.path.dirname(os.path.abspath(__file__)),'packager.py'),
+#            r'C:/Python27/Lib/site-packages/cpt/packager.py')#
+#
+#
+#
+#
 
-        with open(filename, "rt") as version_file:
-            content = version_file.read()
-            version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
-            return version
-        raise Exception('can not version.')
+#from bincrafters import build_template_default
+#def build():
+#    print("===>",os.environ.get('CONAN_UPLOAD_ONLY_WHEN_STABLE'))
+#    builder = build_template_default.get_builder()#
 
-    def _load_conanfile_version(self):
-        filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')
+#    items = []
+#    for item in builder.items:
+#        if not item.options["plugin.node:shared"]:
+#            continue#
 
-        with open(filename, "rt") as version_file:
-            content = version_file.read()
-            version = re.search(r'''version\s*=\s*["'](\S*)["']''', content).group(1)
-            return version
-        raise Exception('can not file version in conanfile.py')
+#        # Visual Sutido 2017 only
+#        if not (platform.system() == "Windows" and item.settings["compiler"] == "Visual Studio" and
+#                item.settings["compiler.version"] == '15' ):
+#            continue
+#    
+#        # skip mingw cross-builds
+#        if not (platform.system() == "Windows" and item.settings["compiler"] == "gcc" and
+#                item.settings["arch"] == "x86"):
+#            items.append(item)
+#        #
 
-    def _update_version( self, version , conan_only = False):
-        
-        filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')
+#    builder.items = items#
 
-        f = open(filename, 'rt')
-        content = f.read()
-        f.close()
+#    builder.run()#
+#
 
-        P_VERSION = re.compile(r'''version\s*=\s*["'](?P<version>\S*)["']''')
-        def _replace(m):
-            #d = m.groupdict()
-            return 'version = "%s"'%version
-        content = P_VERSION.sub(_replace, content)
-        f = open(filename,'wb')
-        content = content.replace('\r\n','\n' )
-        f.write( content )
-        f.close()
-        if conan_only:
-            return
+#class ReleaseManager(object):#
 
+#    _version = None
+#    _conanfile_version = None#
+#
 
-        filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
-        f = open(filename, 'wb')
-        f.write(r'#define __VERSION__ "%s"'%version + '\n')
-        f.close()
+#    def __init__(self):
+#        self._version = self._load_version()
+#        self._conanfile_version = self._load_conanfile_version()#
 
+#    def _load_version(self):
+#        filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')#
 
+#        with open(filename, "rt") as version_file:
+#            content = version_file.read()
+#            version = re.search(r'#define __VERSION__\s+"([0-9a-z.-]+)"', content).group(1)
+#            return version
+#        raise Exception('can not version.')#
 
-        from devutils import shell
-        shell.replace('docs/release-notes.md',{'${__version__}':version})
+#    def _load_conanfile_version(self):
+#        filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')#
 
+#        with open(filename, "rt") as version_file:
+#            content = version_file.read()
+#            version = re.search(r'''version\s*=\s*["'](\S*)["']''', content).group(1)
+#            return version
+#        raise Exception('can not file version in conanfile.py')#
 
+#    def _update_version( self, version , conan_only = False):
+#        
+#        filename = os.path.join(os.path.dirname(__file__), 'conanfile.py')#
 
+#        f = open(filename, 'rt')
+#        content = f.read()
+#        f.close()#
 
+#        P_VERSION = re.compile(r'''version\s*=\s*["'](?P<version>\S*)["']''')
+#        def _replace(m):
+#            #d = m.groupdict()
+#            return 'version = "%s"'%version
+#        content = P_VERSION.sub(_replace, content)
+#        f = open(filename,'wb')
+#        content = content.replace('\r\n','\n' )
+#        f.write( content )
+#        f.close()
+#        if conan_only:
+#            return#
+#
 
-    def _build(self,args):
-        git_dir = os.path.dirname( os.path.abspath(__file__))
-        n = git.get_commit_count_since_last_tag(git_dir)
-        if n >0:
-            
-            #self._update_version(self._conanfile_version + '.%d'%n,conan_only=True)
-            os.environ['CONAN_CHANNEL'] ='testing'
-            os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/testing'
-            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
-        else:
-            os.environ['CONAN_CHANNEL'] ='stable'
-            os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
-            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
-            os.environ['CONAN_STABLE_BRANCH_PATTERN']='dev'
-            
-        if platform.system() == 'Windows' and os.environ.get('CONAN_VISUAL_VERSIONS',None) is None:
-            os.environ['CONAN_VISUAL_VERSIONS'] = '15'
+#        filename = os.path.join(os.path.dirname(__file__), 'addon/src/version.h')
+#        f = open(filename, 'wb')
+#        f.write(r'#define __VERSION__ "%s"'%version + '\n')
+#        f.close()#
+#
+#
 
-        build() #global build
-    
-        
+#        from devutils import shell
+#        shell.replace('docs/release-notes.md',{'${__version__}':version})#
+#
+#
+#
+#
 
+#    def _build(self,args):
+#        git_dir = os.path.dirname( os.path.abspath(__file__))
+#        n = git.get_commit_count_since_last_tag(git_dir)
+#        if n >0:
+#            
+#            #self._update_version(self._conanfile_version + '.%d'%n,conan_only=True)
+#            os.environ['CONAN_CHANNEL'] ='testing'
+#            os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/testing'
+#            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='False'
+#        else:
+#            os.environ['CONAN_CHANNEL'] ='stable'
+#            os.environ['CONAN_UPLOAD']='https://api.bintray.com/conan/pluginx/stable'
+#            os.environ['CONAN_UPLOAD_ONLY_WHEN_STABLE']='True'
+#            os.environ['CONAN_STABLE_BRANCH_PATTERN']='dev'
+#            
+#        if platform.system() == 'Windows' and os.environ.get('CONAN_VISUAL_VERSIONS',None) is None:
+#            os.environ['CONAN_VISUAL_VERSIONS'] = '15'#
 
-    def _bump_version(self,args):
-        if self._has_uncommit():
-            print('you have some files not commited. please commit all of them, before bump the version.')
-            os.system('git status ')
-            return
+#        build() #global build
+#    
+#        #
+#
 
-        oldver = self._conanfile_version
-        ver    = semver.inc( oldver, args.release,loose = True)
-        
-        res = prompt('''
+#    def _bump_version(self,args):
+#        if self._has_uncommit():
+#            print('you have some files not commited. please commit all of them, before bump the version.')
+#            os.system('git status ')
+#            return#
 
-        *********************************************************
-        bump the version %s => %s
-        src/addon/src/version.h
-        conanfile.py
-        docs/release-notes.md
-        version related infomation will update to the new version.
-        '''%(oldver,ver), ['yes','no'])
-        if res == 'no':
-            print('cancel the version bumps.')
-            return
+#        oldver = self._conanfile_version
+#        ver    = semver.inc( oldver, args.release,loose = True)
+#        
+#        res = prompt('''#
 
-        self._update_version( ver )
-        res = prompt('''
+#        *********************************************************
+#        bump the version %s => %s
+#        src/addon/src/version.h
+#        conanfile.py
+#        docs/release-notes.md
+#        version related infomation will update to the new version.
+#        '''%(oldver,ver), ['yes','no'])
+#        if res == 'no':
+#            print('cancel the version bumps.')
+#            return#
 
-        ========================================================
-        bump the version %s => %s
-        please check below files 
+#        self._update_version( ver )
+#        res = prompt('''#
 
-        src/addon/src/version.h
-        conanfile.py
-        docs/release-notes.md
-        yes => commit and tag this release
-        no => give up the commit, you have to revert change file manually.
+#        ========================================================
+#        bump the version %s => %s
+#        please check below files #
 
-        '''%(oldver,ver), ['yes','no'])
-        if res == 'yes':
-            call('git commit -a -m "bumps to version %s"'%ver)
-            call('git tag v%s -m "bumps to version %s"'%(ver,ver))
+#        src/addon/src/version.h
+#        conanfile.py
+#        docs/release-notes.md
+#        yes => commit and tag this release
+#        no => give up the commit, you have to revert change file manually.#
 
+#        '''%(oldver,ver), ['yes','no'])
+#        if res == 'yes':
+#            call('git commit -a -m "bumps to version %s"'%ver)
+#            call('git tag v%s -m "bumps to version %s"'%(ver,ver))#
+#
 
-    def _has_uncommit(self):
-        out,err = check_call('git status -s --show-stash')
-        out = out.strip('\n')
-        if out:            
-            return True
-        return False
+#    def _has_uncommit(self):
+#        out,err = check_call('git status -s --show-stash')
+#        out = out.strip('\n')
+#        if out:            
+#            return True
+#        return False#
+#
+#
+#
 
+#    def run(self, argv):
+#        if len(argv) == 0:
+#            argv = ['build']
+#        parser = argparse.ArgumentParser()
+#        subparsers = parser.add_subparsers()
+#        
+#        # create the parser for the "foo" command
+#        builder = subparsers.add_parser('build')
+#        builder.add_argument('--with-nvm', type=bool, default=False)        
+#        builder.set_defaults(func=self._build)
+#        
+#        # create the parser for the "bar" command
+#        bump_version = subparsers.add_parser('bump-version')
+#        bump_version.add_argument('release', choices=['major', 'minor', 'patch'])
+#        bump_version.set_defaults(func=self._bump_version)
+#        
+#        # parse the args and call whatever function was selected
+#        args = parser.parse_args(argv)
+#        args.func(args)#
+#
 
-
-
-    def run(self, argv):
-        if len(argv) == 0:
-            argv = ['build']
-        parser = argparse.ArgumentParser()
-        subparsers = parser.add_subparsers()
-        
-        # create the parser for the "foo" command
-        builder = subparsers.add_parser('build')
-        builder.add_argument('--with-nvm', type=bool, default=False)        
-        builder.set_defaults(func=self._build)
-        
-        # create the parser for the "bar" command
-        bump_version = subparsers.add_parser('bump-version')
-        bump_version.add_argument('release', choices=['major', 'minor', 'patch'])
-        bump_version.set_defaults(func=self._bump_version)
-        
-        # parse the args and call whatever function was selected
-        args = parser.parse_args(argv)
-        args.func(args)
-
-
-if __name__ == '__main__':   
-    rm =ReleaseManager()
-    rm.run( sys.argv[1:] )
+#if __name__ == '__main__':   
+#    rm =ReleaseManager()
+#    rm.run( sys.argv[1:] )
 
 
 
