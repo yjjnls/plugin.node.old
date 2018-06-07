@@ -78,7 +78,7 @@ def build():
         # Visual Sutido 2017 only
         if platform.system() == "Windows":
             if settings["compiler"] == "Visual Studio":
-                if settings["compiler.version"] == '15' :
+                if settings["compiler.version"] == '14' :
                     builds.append([settings, options, env_vars, build_requires])
         else:
             builds.append([settings, options, env_vars, build_requires])
