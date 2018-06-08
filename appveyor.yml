@@ -1,5 +1,5 @@
 build: false
-image: Visual Studio 2017
+image: Visual Studio 2015
 environment:
     PYTHON: "C:\\Python27"
     PYTHON_VERSION: "2.7.8"
@@ -14,19 +14,19 @@ environment:
 
 
     matrix:
-        - CONAN_VISUAL_VERSIONS: 15
+        - CONAN_VISUAL_VERSIONS: 14
           CONAN_BUILD_TYPES: Release
           CONAN_ARCHS: x86
           nodejs_arch: x86
-        - CONAN_VISUAL_VERSIONS: 15
+        - CONAN_VISUAL_VERSIONS: 14
           CONAN_BUILD_TYPES: Debug
           CONAN_ARCHS: x86
           nodejs_arch: x86
-        - CONAN_VISUAL_VERSIONS: 15
+        - CONAN_VISUAL_VERSIONS: 14
           CONAN_BUILD_TYPES: Release
           CONAN_ARCHS: x86_64
           nodejs_arch: x64
-        - CONAN_VISUAL_VERSIONS: 15
+        - CONAN_VISUAL_VERSIONS: 14
           CONAN_BUILD_TYPES: Debug
           CONAN_ARCHS: x86_64
           nodejs_arch: x64
@@ -46,50 +46,3 @@ before_test:
 
 test_script:
   - python build.py
-
-
-#for:  
-#  # override settings for `master` branch
-#  -
-#    branches:
-#      only:
-#        - master          
-#    environment:
-#      CONAN_CHANNEL: stable
-#      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/stable
-#      CONAN_STABLE_BRANCH_PATTERN: master
-#  -
-#    branches:
-#      only:
-#        - dev          
-#    environment:
-#      CONAN_CHANNEL: testing
-#      CONAN_UPLOAD: https://api.bintray.com/conan/pluginx/testing
-#      CONAN_UPLOAD_ONLY_WHEN_STABLE: False
-#      
-#deploy:
-#  - provider: BinTray
-#    username: mingyiz
-#    api_key:
-#      secure: $env:bintray_apikey
-#    subject: pluginx
-#    repo: testing
-#    package: plugin.node
-#    version: $env:__VERSION__
-##    artifact: plugin.node/0.3.1
-#    publish: true
-#    override: true
-#    on:
-#      branch: dev
-#  - provider: BinTray
-#    username: mingyiz
-#    api_key:
-#      secure: $env:bintray_apikey
-#    subject: pluginx
-#    repo: stable
-#    package: plugin.node
-#    version: $env:__VERSION__
-##    artifact: plugin.node/0.3.1
-#    publish: true
-#    on:
-#      branch: master
