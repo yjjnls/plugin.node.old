@@ -90,6 +90,9 @@ class NodePlugin(ConanFile):
         src = 'addon/build/%s'%self.settings.build_type
 
         self.copy(pattern= 'plugin.node', dst="bin",src = src)
-        self.copy(pattern= 'bin/case-converter-plugin%s'%ext)
+        if platform.system() == "Windows":
+            self.copy(pattern= 'bin/case-converter-plugin%s'%ext)
+        else:
+            self.copy(pattern= 'libcase-converter-plugin%s'%ext, dst="bin",src = 'lib')            
 
         

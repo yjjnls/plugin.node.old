@@ -12,7 +12,7 @@ typedef struct statistic_t {
 
 
 
-int convert(plugin_interface_t* iface, 
+static int convert(plugin_interface_t* iface, 
 	        plugin_buffer_t* data,
 			plugin_buffer_t* meta,
 			plugin_buffer_t* result);

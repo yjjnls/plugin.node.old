@@ -9,6 +9,10 @@ import platform
 class TestPackageConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
+    if platform.system() == "Windows":
+        prefix=''
+    else:
+        prefix='lib'
 
     def imports(self):
         for p in  self.deps_cpp_info.bin_paths:
@@ -17,7 +21,7 @@ class TestPackageConan(ConanFile):
             
             if os.path.exists( filename ):
                 self.copy('plugin.node',dst='bin',src=p)
-                self.copy('case-converter-plugin%s'%self._EXT(),dst='bin',src=p)
+                self.copy('%scase-converter-plugin%s'%(self.prefix,self._EXT()),dst='bin',src=p)
 
     #def build(self):
     #    cmake = CMake(self)
@@ -30,8 +34,8 @@ class TestPackageConan(ConanFile):
 
         
         with tools.environment_append(RunEnvironment(self).vars):
-            command ='node test.js {0}/bin/plugin.node {0}/bin/case-converter-plugin{1}'.format(
-                os.path.abspath('.'), self._EXT())
+            command ='node test.js {0}/bin/plugin.node {0}/bin/{1}case-converter-plugin{2}'.format(
+                os.path.abspath('.'), self.prefix, self._EXT())
 
             self.run(command,cwd = os.path.dirname(__file__))
 
