@@ -7,6 +7,7 @@
 
 #else
 #include <dlfcn.h>
+#include <unistd.h>
 #endif
 
 #ifdef _WIN32
@@ -57,7 +58,7 @@ void* _dlopen(const char *filename)
 #ifdef _WIN32
 	return (void*) LoadLibrary(filename);
 #else
-	return dlopen(filename, RTLD_LAZY);
+	return dlopen(filename, RTLD_NOW|RTLD_GLOBAL|RTLD_DEEPBIND);
 #endif
 }
 
@@ -77,7 +78,7 @@ void* _dlsym(void *handle, const char *symbol)
 #ifdef _WIN32
 	return GetProcAddress((HINSTANCE)handle, symbol);
 #else
-	return dlsym();
+	return dlsym(handle, symbol);
 #endif
 	
 }

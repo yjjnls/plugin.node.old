@@ -60,9 +60,19 @@ inline static int plugin_buffer_safe_move(plugin_buffer_t* src, plugin_buffer_t*
 	}
 	return 1;
 }
+inline char *strdup(const char *s)
+{
+    size_t slen = strlen(s);
+    char *result = (char *)malloc(strlen(s) + 1);
+    if (result == NULL) {
+        return NULL;
+    }
 
+    memcpy(result, s, slen + 1);
+    return result;
+}
 inline static void plugin_buffer_string_set(plugin_buffer_t* src, const char* message) {
-	src->data = _strdup(message);
+	src->data = strdup(message);
 	src->size = strlen(message);
 	
 	src->move = _default_plugin_buffer_move;

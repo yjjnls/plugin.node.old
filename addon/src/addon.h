@@ -190,8 +190,7 @@ private:
 };
 
 #ifndef __NODE_PLUGIN_ADDON_VERSION__
-#include "version.h"
-#define __NODE_PLUGIN_ADDON_VERSION__ __VERSION__
+#define __NODE_PLUGIN_ADDON_VERSION__ "0.2.0"
 #endif
 
 #endif
