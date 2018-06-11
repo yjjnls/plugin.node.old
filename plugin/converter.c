@@ -119,9 +119,10 @@ static int convert(plugin_interface_t* iface,
 	plugin_buffer_safe_move(data, result);
 	char* txt = (char*)result->data;
 	statistic_t* ps = (statistic_t*)iface->instance;
+    int i = 0;
 	if (!strncmp(action, "upper", size))
 	{
-		for (int i = 0; i < result->size; i++)
+		for (i = 0; i < result->size; i++)
 		{
 			txt[i]=(char)toupper(txt[i]);
 		}
@@ -129,7 +130,7 @@ static int convert(plugin_interface_t* iface,
 	}
 	else if (!strncmp(action, "lower", size))
 	{
-		for (int i = 0; i < result->size; i++)
+		for (i = 0; i < result->size; i++)
 		{
 			txt[i] = (char)tolower(txt[i]);
 		}

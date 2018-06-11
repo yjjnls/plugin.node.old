@@ -36,7 +36,8 @@ class TestPackageConan(ConanFile):
         with tools.environment_append(RunEnvironment(self).vars):
             command ='node test.js {0}/bin/plugin.node {0}/bin/{1}case-converter-plugin{2}'.format(
                 os.path.abspath('.'), self.prefix, self._EXT())
-
+            if self.settings.os == "Linux":
+                command = 'LD_LIBRARY_PATH=%s ' % (os.path.abspath('.')+'/bin') + command
             self.run(command,cwd = os.path.dirname(__file__))
 
 
