@@ -11,7 +11,8 @@ from conans.client.loader_parse import load_conanfile_class
 __dir__ =os.path.dirname(os.path.abspath(__file__))
 
 PACKAGE_NAME   = 'plugin.node'
-CONAN_USERNAME = 'pluginx'
+# CONAN_USERNAME = 'pluginx'
+CONAN_USERNAME = os.environ["CONAN_USERNAME"]
 
 def get_build_number():
     '''
@@ -52,7 +53,7 @@ def build():
         CONAN_CHANNEL = 'testing'
         CONAN_UPLOAD_ONLY_WHEN_STABLE = False
         CONAN_STABLE_CHANNEL = 'testing'
-        update_version(version)
+        # update_version(version)
 
 
     CONAN_UPLOAD  = 'https://api.bintray.com/conan/%s/%s'%(CONAN_USERNAME,CONAN_CHANNEL)
@@ -74,14 +75,16 @@ def build():
         # release only    
         if settings["build_type"] == "Debug":
             continue
-
+        
         # Visual Sutido 2017 only
         if platform.system() == "Windows":
             if settings["compiler"] == "Visual Studio":
                 if settings["compiler.version"] == '14' :
                     builds.append([settings, options, env_vars, build_requires])
-        else:
-            builds.append([settings, options, env_vars, build_requires])
+        elif platform.system() == "Linux":
+                if settings["compiler"] == "gcc":
+                    if settings["compiler.version"] == '4.9' and settings["arch"] == 'x86_64':
+                        builds.append([settings, options, env_vars, build_requires])
     builder.builds = builds
     builder.run()
 
