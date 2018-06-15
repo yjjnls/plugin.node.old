@@ -1,66 +1,34 @@
 env:
-   global:
-    #  - CONAN_REFERENCE: "plugin.node/0.5.3-dev"
-     - CONAN_USERNAME: "yjjnls"
-     - CONAN_LOGIN_USERNAME: "yjjnls"
-     - CONAN_STABLE_BRANCH_PATTERN: "stable/*"
-     - CONAN_PASSWORD: 1c2adb5a99c8fbdbfe203e012e37a734aa142f68
-        # secure: s+BOuh3hBuWX0CC7gWS+wExeBRmKVO+EcijzMovdqV+95A+O7rMo2D/LnBjxW0IY
-     - CONAN_CHANNEL: "testing"
-     - CONAN_UPLOAD: "https://api.bintray.com/conan/yjjnls/testing"
-
-linux: &linux
-   os: linux
-   sudo: required
-   language: python
-   python: "2.7"
-   services:
-     - docker
-osx: &osx
-   os: osx
-   language: generic
+  global:
+  - CONAN_USERNAME: yjjnls
+  - CONAN_LOGIN_USERNAME: yjjnls
+  - CONAN_STABLE_BRANCH_PATTERN: stable/*
+  - CONAN_CHANNEL: testing
+  - CONAN_UPLOAD: https://api.bintray.com/conan/yjjnls/testing
+  - secure: cMZappeazgtFBcsHCjO/Smg5+JBuPTycF+MmBCZ3MkqRMQAHjP5yv9WIz9URkbwpJ4oWqNk1btnuGu6dX4vPmMCGkkL/kEJZ+TFS3+DzPJUEoEeGczcFPi2JKCfbugSHzAmLxx0tiXuy0w0WXqeOOucA5i46sy4IEukQZL7xsh1G/OjH2z1uvwV7ASlM8sRRzxIvtDlUsJR90oBm0DBrhK1TLKy3nsY3mRWpzoEwCi3dUdxrovrUdEgRjl8SB9bykBUzrvPExSOivKCo0K4bdD7wMdYy+9mA2nt2Uf3Vrx8/V9e0C5E968iSPyfvjAt69SjRHvWaQ4xbT2++lTlRoES5S7gtq7Zn+aNxYFaqhpQlxfMLBkA6wEr1AtRG2t/uX15bGyii1L6vhnqiVJcO8beSXm1jw2th3bI+alN5cSOBZhqEV3J7v9D5UAXILtKJ0MhZAyf7DUFVgMphHLsHOkYX/TvRg2QwRVTtCJReDrbLtyc2Jr6vNy/2FiR8P6vwX1I3hc/ByKRBZxk/Xs40AFAXemlqHz8OazEWCZjrFVHd7uEFuPXwfGZxALLTN2ypQN/B3ZkTa1gFpg5FnQwATMy61Yz0wyB70prVuicw5e4nYahXW6IdSabmWHr2/mSxScboBHGLbSqJnmanCbigq7S25Ed9HG8/b6hD9KJuSZs=
+linux:
+  os: linux
+  sudo: required
+  language: python
+  python: '2.7'
+  services: &1
+  - docker
+osx:
+  os: osx
+  language: generic
 matrix:
-   include:
-
-#       # - <<: *linux
-#       #   env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
-
-      - <<: *linux
-        env:  CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=yjjnls/conangcc49 CONAN_BUILD_TYPES=Release CONAN_ARCHS=x86_64
-
+  include:
+  - os: linux
+    sudo: required
+    language: python
+    python: '2.7'
+    services: *1
+    env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=yjjnls/conangcc49 CONAN_BUILD_TYPES=Release
+      CONAN_ARCHS=x86_64
 install:
-#   - yes|sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-#   - yes|sudo apt-get update
-#   - sudo apt-get install gcc-4.9
-#   - sudo apt-get install g++-4.9
-#   - sudo rm -f /usr/bin/gcc /usr/bin/g++  
-#   - sudo ln -s /usr/bin/gcc-4.9 /usr/bin/gcc  
-#   - sudo ln -s /usr/bin/g++-4.9 /usr/bin/g++
-  - sudo pip install conan --upgrade
-  - sudo pip install conan_package_tools bincrafters_package_tools
-  - sudo pip install shell
-  - sudo conan user
-#   - pushd ~
-#   - wget https://nodejs.org/dist/v10.4.0/node-v10.4.0-linux-x64.tar.xz 
-#   - tar -xf node-v10.4.0-linux-x64.tar.xz
-#   - sudo cp -rf node-v10.4.0-linux-x64/* /usr/local
-#   - popd
-#   - sudo npm install -g node-gyp 
-#   - sudo node-gyp --version
-#   - sudo pkg-config --version
-#   - pushd ~
-#   - wget https://cmake.org/files/v3.11/cmake-3.11.3-Linux-x86_64.tar.gz
-#   - tar -xf cmake-3.11.3-Linux-x86_64.tar.gz
-#   - sudo cp -rf cmake-3.11.3-Linux-x86_64/bin /usr/local
-#   - sudo cp -rf cmake-3.11.3-Linux-x86_64/share /usr/local
-#   - popd
-
-# before_script:
-#   - sudo gcc --version
-#   - sudo python --version
-#   - sudo cmake --version
-#   - sudo node --version
-
+- sudo pip install conan --upgrade
+- sudo pip install conan_package_tools bincrafters_package_tools
+- sudo pip install shell
+- sudo conan user
 script:
-  # - sudo conan create . yjjnls/testing
-  - sudo python build.py
+- sudo python build.py
