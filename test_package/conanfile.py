@@ -29,9 +29,11 @@ class TestPackageConan(ConanFile):
     #    cmake.build()
 
     def test(self):
-        
-
-
+        self.run("sudo pip install cpplint")
+        for (root, dirs, files) in os.walk("%s/../addon/src" % os.path.dirname(__file__)):
+            for filename in files:
+                print os.path.join(root,filename)
+                self.run("cpplint --filter=-whitespace/tab,-whitespace/braces,-build/header_guard,-readability/casting,-build/include_order,-build/include --linelength=120 %s" % os.path.join(root,filename))
         
         with tools.environment_append(RunEnvironment(self).vars):
             command ='node test.js {0}/bin/plugin.node {0}/bin/{1}case-converter-plugin{2}'.format(

@@ -67,7 +67,13 @@ class NodePlugin(ConanFile):
                 msvs = str(self.settings.compiler.version)
                 assert ( msvs in _COMPILER.keys())
                 options["compiler"] = _COMPILER[msvs]
+        else:
+            self.run("wget https://nodejs.org/dist/v10.4.0/node-v10.4.0-linux-x64.tar.xz")
+            self.run("tar -xf node-v10.4.0-linux-x64.tar.xz")
+            self.run("sudo cp -rf node-v10.4.0-linux-x64/* /usr/local")
+            self.run("sudo npm install -g node-gyp ")
 
+        
         filename = os.path.join('addon/src/version.h')
         f = open( filename,'wb')
         f.write('''#define __VERSION__ "%s"

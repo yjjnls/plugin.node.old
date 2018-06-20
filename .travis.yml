@@ -23,7 +23,7 @@ matrix:
     language: python
     python: '2.7'
     services: *1
-    env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=yjjnls/conangcc49 CONAN_BUILD_TYPES=Release
+    env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49 CONAN_BUILD_TYPES=Release
       CONAN_ARCHS=x86_64
 install:
 - sudo pip install conan --upgrade
